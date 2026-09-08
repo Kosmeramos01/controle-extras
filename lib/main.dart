@@ -370,98 +370,202 @@ class TelaAdmin extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.black,
         foregroundColor: Colors.white,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new, size: 20),
+          onPressed: () => Navigator.pop(context),
+        ),
         title: const Text(
           'PAINEL ADMINISTRATIVO',
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            letterSpacing: .4,
+          ),
         ),
       ),
-      body: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 700),
-          child: ListView(
-            padding: const EdgeInsets.all(24),
-            children: [
-              const CabecalhoInstitucional(
-                tamanhoEscudo: 105,
-                compacto: true,
-              ),
-              const SizedBox(height: 18),
-              const Text(
-                'CONTROLE ADMINISTRATIVO',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 1.2,
-                ),
-              ),
-              const SizedBox(height: 30),
-              _botao(
-                context,
-                titulo: 'NOVO EXTRA',
-                subtitulo: 'Cadastrar um novo evento/extra',
-                icone: Icons.add_circle_outline,
-                tela: const TelaNovoExtra(),
-              ),
-              _botao(
-                context,
-                titulo: 'EXTRAS CADASTRADOS',
-                subtitulo: 'Visualizar e administrar os extras',
-                icone: Icons.event_note,
-                tela: const TelaAdminExtras(),
-              ),
-              _botao(
-                context,
-                titulo: 'INSCRITOS',
-                subtitulo: 'Consultar todos os agentes inscritos',
-                icone: Icons.people_alt,
-                tela: const TelaAdminInscritos(),
-              ),
-              _botao(
-                context,
-                titulo: 'RELATÓRIOS',
-                subtitulo: 'Área para geração dos relatórios em PDF',
-                icone: Icons.picture_as_pdf,
-                tela: const TelaAdminRelatorios(),
-              ),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: RadialGradient(
+            center: Alignment.topCenter,
+            radius: 1.15,
+            colors: [
+              Color(0xFF191919),
+              Colors.black,
             ],
+          ),
+        ),
+        child: SafeArea(
+          top: false,
+          child: Center(
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final largura = constraints.maxWidth;
+                final isDesktop = largura >= 900;
+                final maxWidth = isDesktop ? 1050.0 : 720.0;
+
+                return SingleChildScrollView(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: largura < 500 ? 18 : 28,
+                    vertical: 20,
+                  ),
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(maxWidth: maxWidth),
+                    child: Column(
+                      children: [
+                        const CabecalhoInstitucional(
+                          tamanhoEscudo: 125,
+                          compacto: false,
+                        ),
+                        const SizedBox(height: 16),
+                        const Text(
+                          'CONTROLE ADMINISTRATIVO',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 27,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: 1.4,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Container(
+                          width: 72,
+                          height: 3,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(3),
+                          ),
+                        ),
+                        const SizedBox(height: 34),
+                        GridView.count(
+                          crossAxisCount: isDesktop ? 4 : 2,
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          crossAxisSpacing: 18,
+                          mainAxisSpacing: 18,
+                          childAspectRatio: isDesktop ? 1.02 : .98,
+                          children: [
+                            _botaoPainel(
+                              context,
+                              titulo: 'NOVO EXTRA',
+                              icone: Icons.add_circle_outline,
+                              tela: const TelaNovoExtra(),
+                            ),
+                            _botaoPainel(
+                              context,
+                              titulo: 'EXTRAS CADASTRADOS',
+                              icone: Icons.calendar_month_outlined,
+                              tela: const TelaAdminExtras(),
+                            ),
+                            _botaoPainel(
+                              context,
+                              titulo: 'INSCRITOS',
+                              icone: Icons.groups_outlined,
+                              tela: const TelaAdminInscritos(),
+                            ),
+                            _botaoPainel(
+                              context,
+                              titulo: 'RELATÓRIOS',
+                              icone: Icons.picture_as_pdf_outlined,
+                              tela: const TelaAdminRelatorios(),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 26),
+                        const Text(
+                          'SEGURANÇA • ORDEM • RESPEITO',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.white54,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 2.2,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget _botao(
+  Widget _botaoPainel(
     BuildContext context, {
     required String titulo,
-    required String subtitulo,
     required IconData icone,
     required Widget tela,
   }) {
-    return Card(
-      color: Colors.white,
-      margin: const EdgeInsets.only(bottom: 15),
-      child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 20,
-          vertical: 10,
-        ),
-        leading: Icon(icone, color: Colors.black, size: 34),
-        title: Text(
-          titulo,
-          style: const TextStyle(
-            color: Colors.black,
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(20),
+        onTap: () => _abrir(context, tela),
+        child: Container(
+          decoration: BoxDecoration(
+            color: const Color(0xFF111111),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: Colors.white38,
+              width: 1.2,
+            ),
+            boxShadow: const [
+              BoxShadow(
+                color: Colors.black54,
+                blurRadius: 14,
+                offset: Offset(0, 7),
+              ),
+            ],
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 18),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                width: 88,
+                height: 88,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: Colors.white70,
+                    width: 1.5,
+                  ),
+                ),
+                child: Icon(
+                  icone,
+                  color: Colors.white,
+                  size: 47,
+                ),
+              ),
+              const SizedBox(height: 18),
+              Text(
+                titulo,
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: .7,
+                ),
+              ),
+              const SizedBox(height: 10),
+              Container(
+                width: 42,
+                height: 2,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ],
           ),
         ),
-        subtitle: Text(
-          subtitulo,
-          style: const TextStyle(color: Colors.black54),
-        ),
-        trailing: const Icon(Icons.chevron_right, color: Colors.black),
-        onTap: () => _abrir(context, tela),
       ),
     );
   }
@@ -2232,7 +2336,7 @@ class _TelaAdminRelatoriosState extends State<TelaAdminRelatorios> {
         '${i + 1}',
         lista[i]['NOME']?.toString() ?? '',
         '☐',
-        '',
+        '________________________________',
       ]);
     }
 
@@ -2295,7 +2399,6 @@ class _TelaAdminRelatoriosState extends State<TelaAdminRelatorios> {
                                     dropdownColor: Colors.white,
                                     decoration: InputDecoration(
                                       labelText: 'MÊS',
-                                      floatingLabelBehavior: FloatingLabelBehavior.always,
                                       labelStyle: const TextStyle(color: Colors.black),
                                       floatingLabelStyle: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
                                       filled: true,
@@ -2305,7 +2408,7 @@ class _TelaAdminRelatoriosState extends State<TelaAdminRelatorios> {
                                       ),
                                       contentPadding: const EdgeInsets.symmetric(
                                         horizontal: 12,
-                                        vertical: 14,
+                                        vertical: 10,
                                       ),
                                     ),
                                     items: [
@@ -2336,7 +2439,6 @@ class _TelaAdminRelatoriosState extends State<TelaAdminRelatorios> {
                                     dropdownColor: Colors.white,
                                     decoration: InputDecoration(
                                       labelText: 'ANO',
-                                      floatingLabelBehavior: FloatingLabelBehavior.always,
                                       labelStyle: const TextStyle(color: Colors.black),
                                       floatingLabelStyle: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
                                       filled: true,
@@ -2346,7 +2448,7 @@ class _TelaAdminRelatoriosState extends State<TelaAdminRelatorios> {
                                       ),
                                       contentPadding: const EdgeInsets.symmetric(
                                         horizontal: 12,
-                                        vertical: 14,
+                                        vertical: 10,
                                       ),
                                     ),
                                     items: [
