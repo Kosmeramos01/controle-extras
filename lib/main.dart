@@ -66,7 +66,7 @@ class RoteadorInicial extends StatelessWidget {
       );
     }
 
-    return const TelaInicial();
+    return const TelaAdmin();
   }
 }
 
@@ -138,218 +138,6 @@ class CabecalhoInstitucional extends StatelessWidget {
 
 
 // =========================================================
-// TELA INICIAL
-// =========================================================
-
-class TelaInicial extends StatefulWidget {
-  const TelaInicial({super.key});
-
-  @override
-  State<TelaInicial> createState() => _TelaInicialState();
-}
-
-class _TelaInicialState extends State<TelaInicial> {
-  String status = 'Testando conexão...';
-
-  @override
-  void initState() {
-    super.initState();
-    testarConexao();
-  }
-
-  // =======================================================
-  // TESTAR CONEXÃO
-  // =======================================================
-
-  Future<void> testarConexao() async {
-    try {
-      final resposta = await http.get(
-        Uri.parse(urlGoogle),
-      );
-
-      if (!mounted) return;
-
-      if (resposta.statusCode == 200) {
-        final dados = jsonDecode(resposta.body);
-
-        if (dados is Map && dados.containsKey('extras')) {
-          setState(() {
-            status = 'CONECTADO AO GOOGLE SHEETS';
-          });
-        } else {
-          setState(() {
-            status = 'GOOGLE SHEETS RESPONDEU';
-          });
-        }
-      } else {
-        setState(() {
-          status = 'ERRO HTTP: ${resposta.statusCode}';
-        });
-      }
-    } catch (erro) {
-      if (!mounted) return;
-
-      setState(() {
-        status = 'ERRO DE CONEXÃO';
-      });
-
-      debugPrint('ERRO DE CONEXÃO: $erro');
-    }
-  }
-
-  // =======================================================
-  // TELA
-  // =======================================================
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: Center(
-        child: Container(
-          width: 500,
-          padding: const EdgeInsets.all(40),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const CabecalhoInstitucional(
-                tamanhoEscudo: 125,
-              ),
-
-              const SizedBox(height: 20),
-
-              const Text(
-                'CONTROLE DE EXTRAS',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 2,
-                ),
-              ),
-
-              const SizedBox(height: 25),
-
-              Text(
-                status,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-
-              const SizedBox(height: 40),
-
-              // =================================================
-              // INSCRIÇÕES
-              // =================================================
-
-              SizedBox(
-                width: double.infinity,
-                height: 55,
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const TelaInscricoes(
-                          url: urlGoogle,
-                        ),
-                      ),
-                    );
-                  },
-                  child: const Text(
-                    'INSCRIÇÕES',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 15),
-
-              // =================================================
-              // PLANTÕES
-              // =================================================
-
-              SizedBox(
-                width: double.infinity,
-                height: 55,
-                child: ElevatedButton(
-                  onPressed: () {},
-                  child: const Text(
-                    'PLANTÕES',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 15),
-
-              // =================================================
-              // RELATÓRIOS
-              // =================================================
-
-              SizedBox(
-                width: double.infinity,
-                height: 55,
-                child: ElevatedButton(
-                  onPressed: () {},
-                  child: const Text(
-                    'RELATÓRIOS',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 15),
-
-              // =================================================
-              // ADMINISTRADOR
-              // =================================================
-
-              SizedBox(
-                width: double.infinity,
-                height: 55,
-                child: ElevatedButton.icon(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const TelaAdmin(),
-                      ),
-                    );
-                  },
-                  icon: const Icon(Icons.admin_panel_settings),
-                  label: const Text(
-                    'ADMINISTRADOR',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-// =========================================================
 // PAINEL ADMINISTRATIVO
 // =========================================================
 
@@ -370,202 +158,98 @@ class TelaAdmin extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.black,
         foregroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, size: 20),
-          onPressed: () => Navigator.pop(context),
-        ),
         title: const Text(
           'PAINEL ADMINISTRATIVO',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            letterSpacing: .4,
-          ),
+          style: TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: RadialGradient(
-            center: Alignment.topCenter,
-            radius: 1.15,
-            colors: [
-              Color(0xFF191919),
-              Colors.black,
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 700),
+          child: ListView(
+            padding: const EdgeInsets.all(24),
+            children: [
+              const CabecalhoInstitucional(
+                tamanhoEscudo: 105,
+                compacto: true,
+              ),
+              const SizedBox(height: 18),
+              const Text(
+                'CONTROLE ADMINISTRATIVO',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.2,
+                ),
+              ),
+              const SizedBox(height: 30),
+              _botao(
+                context,
+                titulo: 'NOVO EXTRA',
+                subtitulo: 'Cadastrar um novo evento/extra',
+                icone: Icons.add_circle_outline,
+                tela: const TelaNovoExtra(),
+              ),
+              _botao(
+                context,
+                titulo: 'EXTRAS CADASTRADOS',
+                subtitulo: 'Visualizar e administrar os extras',
+                icone: Icons.event_note,
+                tela: const TelaAdminExtras(),
+              ),
+              _botao(
+                context,
+                titulo: 'INSCRITOS',
+                subtitulo: 'Consultar todos os agentes inscritos',
+                icone: Icons.people_alt,
+                tela: const TelaAdminInscritos(),
+              ),
+              _botao(
+                context,
+                titulo: 'RELATÓRIOS',
+                subtitulo: 'Área para geração dos relatórios em PDF',
+                icone: Icons.picture_as_pdf,
+                tela: const TelaAdminRelatorios(),
+              ),
             ],
-          ),
-        ),
-        child: SafeArea(
-          top: false,
-          child: Center(
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                final largura = constraints.maxWidth;
-                final isDesktop = largura >= 900;
-                final maxWidth = isDesktop ? 1050.0 : 720.0;
-
-                return SingleChildScrollView(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: largura < 500 ? 18 : 28,
-                    vertical: 20,
-                  ),
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(maxWidth: maxWidth),
-                    child: Column(
-                      children: [
-                        const CabecalhoInstitucional(
-                          tamanhoEscudo: 125,
-                          compacto: false,
-                        ),
-                        const SizedBox(height: 16),
-                        const Text(
-                          'CONTROLE ADMINISTRATIVO',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 27,
-                            fontWeight: FontWeight.w800,
-                            letterSpacing: 1.4,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Container(
-                          width: 72,
-                          height: 3,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(3),
-                          ),
-                        ),
-                        const SizedBox(height: 34),
-                        GridView.count(
-                          crossAxisCount: isDesktop ? 4 : 2,
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          crossAxisSpacing: 18,
-                          mainAxisSpacing: 18,
-                          childAspectRatio: isDesktop ? 1.02 : .98,
-                          children: [
-                            _botaoPainel(
-                              context,
-                              titulo: 'NOVO EXTRA',
-                              icone: Icons.add_circle_outline,
-                              tela: const TelaNovoExtra(),
-                            ),
-                            _botaoPainel(
-                              context,
-                              titulo: 'EXTRAS CADASTRADOS',
-                              icone: Icons.calendar_month_outlined,
-                              tela: const TelaAdminExtras(),
-                            ),
-                            _botaoPainel(
-                              context,
-                              titulo: 'INSCRITOS',
-                              icone: Icons.groups_outlined,
-                              tela: const TelaAdminInscritos(),
-                            ),
-                            _botaoPainel(
-                              context,
-                              titulo: 'RELATÓRIOS',
-                              icone: Icons.picture_as_pdf_outlined,
-                              tela: const TelaAdminRelatorios(),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 26),
-                        const Text(
-                          'SEGURANÇA • ORDEM • RESPEITO',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: Colors.white54,
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 2.2,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
           ),
         ),
       ),
     );
   }
 
-  Widget _botaoPainel(
+  Widget _botao(
     BuildContext context, {
     required String titulo,
+    required String subtitulo,
     required IconData icone,
     required Widget tela,
   }) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(20),
-        onTap: () => _abrir(context, tela),
-        child: Container(
-          decoration: BoxDecoration(
-            color: const Color(0xFF111111),
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-              color: Colors.white38,
-              width: 1.2,
-            ),
-            boxShadow: const [
-              BoxShadow(
-                color: Colors.black54,
-                blurRadius: 14,
-                offset: Offset(0, 7),
-              ),
-            ],
-          ),
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 18),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                width: 88,
-                height: 88,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: Colors.white70,
-                    width: 1.5,
-                  ),
-                ),
-                child: Icon(
-                  icone,
-                  color: Colors.white,
-                  size: 47,
-                ),
-              ),
-              const SizedBox(height: 18),
-              Text(
-                titulo,
-                textAlign: TextAlign.center,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: .7,
-                ),
-              ),
-              const SizedBox(height: 10),
-              Container(
-                width: 42,
-                height: 2,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-            ],
+    return Card(
+      color: Colors.white,
+      margin: const EdgeInsets.only(bottom: 15),
+      child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 20,
+          vertical: 10,
+        ),
+        leading: Icon(icone, color: Colors.black, size: 34),
+        title: Text(
+          titulo,
+          style: const TextStyle(
+            color: Colors.black,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
           ),
         ),
+        subtitle: Text(
+          subtitulo,
+          style: const TextStyle(color: Colors.black54),
+        ),
+        trailing: const Icon(Icons.chevron_right, color: Colors.black),
+        onTap: () => _abrir(context, tela),
       ),
     );
   }
