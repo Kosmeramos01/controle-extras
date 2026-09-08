@@ -33,7 +33,7 @@ jobs:
         run: flutter pub get
 
       - name: Compilar Flutter Web
-        run: flutter build web --release --base-href "/controle-extras/"
+       run: flutter build web --release --base-href "/controle-extras/" --pwa-strategy=none
 
       - name: Preparar arquivos
         uses: actions/upload-pages-artifact@v3
