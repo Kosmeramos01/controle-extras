@@ -2232,7 +2232,7 @@ class _TelaAdminRelatoriosState extends State<TelaAdminRelatorios> {
         '${i + 1}',
         lista[i]['NOME']?.toString() ?? '',
         '☐',
-        '________________________________',
+        '',
       ]);
     }
 
@@ -2295,6 +2295,7 @@ class _TelaAdminRelatoriosState extends State<TelaAdminRelatorios> {
                                     dropdownColor: Colors.white,
                                     decoration: InputDecoration(
                                       labelText: 'MÊS',
+                                      floatingLabelBehavior: FloatingLabelBehavior.always,
                                       labelStyle: const TextStyle(color: Colors.black),
                                       floatingLabelStyle: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
                                       filled: true,
@@ -2304,7 +2305,7 @@ class _TelaAdminRelatoriosState extends State<TelaAdminRelatorios> {
                                       ),
                                       contentPadding: const EdgeInsets.symmetric(
                                         horizontal: 12,
-                                        vertical: 10,
+                                        vertical: 14,
                                       ),
                                     ),
                                     items: [
@@ -2335,6 +2336,7 @@ class _TelaAdminRelatoriosState extends State<TelaAdminRelatorios> {
                                     dropdownColor: Colors.white,
                                     decoration: InputDecoration(
                                       labelText: 'ANO',
+                                      floatingLabelBehavior: FloatingLabelBehavior.always,
                                       labelStyle: const TextStyle(color: Colors.black),
                                       floatingLabelStyle: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
                                       filled: true,
@@ -2344,7 +2346,7 @@ class _TelaAdminRelatoriosState extends State<TelaAdminRelatorios> {
                                       ),
                                       contentPadding: const EdgeInsets.symmetric(
                                         horizontal: 12,
-                                        vertical: 10,
+                                        vertical: 14,
                                       ),
                                     ),
                                     items: [
