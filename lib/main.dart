@@ -1,4 +1,7 @@
 import 'dart:convert';
+import 'dart:typed_data';
+
+import 'package:flutter/foundation.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -2235,10 +2238,26 @@ class _TelaAdminRelatoriosState extends State<TelaAdminRelatorios> {
           ? 'lista_presenca_${mesSelecionado}_$anoSelecionado.pdf'
           : 'relatorio_extras_${mesSelecionado}_$anoSelecionado.pdf';
 
-      await Printing.layoutPdf(
-        name: nomeArquivo,
-        onLayout: (_) async => bytes,
-      );
+      // No navegador, mantemos a impressão nativa do Chrome (como na
+      // segunda imagem). No aplicativo Windows, abrimos primeiro uma
+      // pré-visualização do PDF dentro do próprio aplicativo, evitando
+      // a janela antiga "Configurar Impressão".
+      if (kIsWeb) {
+        await Printing.layoutPdf(
+          name: nomeArquivo,
+          onLayout: (_) async => Uint8List.fromList(bytes),
+        );
+      } else {
+        if (!mounted) return;
+        await Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => TelaVisualizacaoPdf(
+              bytes: bytes,
+              nomeArquivo: nomeArquivo,
+            ),
+          ),
+        );
+      }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -2535,6 +2554,58 @@ class _TelaAdminRelatoriosState extends State<TelaAdminRelatorios> {
                     ),
                   ),
                 ]),
+    );
+  }
+}
+
+// =========================================================
+// VISUALIZAÇÃO DO PDF
+// =========================================================
+
+class TelaVisualizacaoPdf extends StatelessWidget {
+  final List<int> bytes;
+  final String nomeArquivo;
+
+  const TelaVisualizacaoPdf({
+    super.key,
+    required this.bytes,
+    required this.nomeArquivo,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFF202124),
+      appBar: AppBar(
+        backgroundColor: Colors.black,
+        foregroundColor: Colors.white,
+        title: const Text('VISUALIZAÇÃO DO PDF'),
+        actions: [
+          IconButton(
+            tooltip: 'Imprimir',
+            icon: const Icon(Icons.print),
+            onPressed: () async {
+              await Printing.layoutPdf(
+                name: nomeArquivo,
+                onLayout: (_) async => Uint8List.fromList(bytes),
+              );
+            },
+          ),
+        ],
+      ),
+      body: PdfPreview(
+        build: (format) async => Uint8List.fromList(bytes),
+        pdfFileName: nomeArquivo,
+        allowSharing: false,
+        allowPrinting: true,
+        canChangePageFormat: false,
+        canChangeOrientation: false,
+        canDebug: false,
+        loadingWidget: const Center(
+          child: CircularProgressIndicator(),
+        ),
+        actions: const [],
+      ),
     );
   }
 }
