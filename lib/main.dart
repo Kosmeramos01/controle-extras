@@ -11,6 +11,7 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'splash_publico.dart';
 
 void main() {
   runApp(const ControleExtrasApp());
@@ -64,9 +65,11 @@ class RoteadorInicial extends StatelessWidget {
 
     // Link público de um evento: mantém o acesso direto ao extra.
     if (idExtra != null && idExtra.trim().isNotEmpty) {
-      return TelaExtraPublico(
-        url: urlGoogle,
-        idExtra: idExtra,
+      return SplashPublicoExtra(
+        destino: TelaExtraPublico(
+          url: urlGoogle,
+          idExtra: idExtra,
+        ),
       );
     }
 
